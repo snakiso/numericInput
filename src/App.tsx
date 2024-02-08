@@ -1,26 +1,23 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, {useState} from 'react';
 import './App.css';
+import {NumericInput} from "./components/NumericInput/NumericInput";
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    const [numbersForRender, setNumbersForRender] = useState<string[]>([])
+    return (
+        <div className="App">
+            <h2>Введите число и нажмите enter</h2>
+            <NumericInput currentNums={numbersForRender} callback={(num) => setNumbersForRender(num)}/>
+            <div className={'nums'}>
+                <h4>числа которые вы вводили</h4>
+                {numbersForRender.map((num, index) => {
+                    return (
+                        <span key={index}>{num}</span>
+                    )
+                })}
+            </div>
+        </div>
+    );
 }
 
 export default App;
