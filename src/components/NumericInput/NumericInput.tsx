@@ -21,9 +21,14 @@ export const NumericInput = ({callback, currentNums}: NumericInputProps) => {
     };
 
     const onKeyDownHandler = (e: keyboardKey) => {
+        let firstValue = value.split('.')[0]
         if (e.key === "Enter") {
-            let newValue = value.replace(/^0+/, "");
-            callback([newValue, ...currentNums]);
+            if (firstValue.length === 1 && firstValue === '0') {
+                callback([value, ...currentNums]);
+            } else {
+                let newValue = value.replace(/^0+/, "");
+                callback([newValue, ...currentNums]);
+            }
         }
     }
 
