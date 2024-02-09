@@ -1,4 +1,5 @@
 import {ChangeEvent, useState} from "react";
+import {NumericFormat} from "react-number-format";
 import {keyboardKey} from "@testing-library/user-event";
 
 type NumericInputProps = {
@@ -7,52 +8,35 @@ type NumericInputProps = {
 }
 
 export const NumericInput = ({callback, currentNums}: NumericInputProps) => {
-    const [value, setValue] = useState('');
+    const [value, setValue] = useState<string>('0.00')
 
-    const valueSplitByDot = value.split('.')
-
-    const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-        const inputValue = e.currentTarget.value;
-
-        const regex = /^\d+(\.\d{0,2})?$/;
-        if (inputValue === '' || regex.test(inputValue)) {
-            setValue(inputValue);
-        }
-    };
-
-    const onKeyDownHandler = (e: keyboardKey) => {
-        if (e.key === 'Enter') {
-            if (!value.includes('.') || valueSplitByDot.length === 2) {
-                callback([Number(value).toFixed(2), ...currentNums])
-                setValue('')
-            } else if (valueSplitByDot[1].length === 1) {
-                callback([(value + '0'), ...currentNums])
-                setValue('')
-            } else {
-                callback([value, ...currentNums])
-                setValue('')
-            }
+    const onBlurHandler = () => {
+        if (!value) {
+            setValue('0.00')
         }
     }
 
-    const onBlurHandler = () => {
-        if (value && !value.includes('.')) {
-            setValue(prev => prev + '.00')
-        } else if (value && valueSplitByDot[1].length === 1) {
-            setValue(prev => prev + '0')
-        } else if (valueSplitByDot.length === 2 && valueSplitByDot[1] === '') {
-            setValue(prev => prev + '00')
+    const onChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
+        setValue(e.currentTarget.value);
+    };
+
+    const onKeyDownHandler = (e: keyboardKey) => {
+        if (e.key === "Enter") {
+            let newValue = value.replace(/^0+/, "");
+            callback([newValue, ...currentNums]);
         }
     }
 
     return (
-        <input
-            type="text"
-            value={value}
-            onChange={handleInputChange}
-            onKeyDown={onKeyDownHandler}
-            onBlur={onBlurHandler}
-            placeholder="Введите число типа 0.00"
-        />
+        <NumericFormat value={value}
+                       onValueChange={(values) => {
+                           setValue(values.value)
+                       }}
+                       decimalScale={2}
+                       fixedDecimalScale
+                       onBlur={onBlurHandler}
+                       onChange={onChangeHandler}
+                       onKeyDown={onKeyDownHandler}/>
     );
-};
+}
+
