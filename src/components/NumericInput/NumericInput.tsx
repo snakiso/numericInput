@@ -24,7 +24,7 @@ export const NumericInput = ({callback, currentNums}: NumericInputProps) => {
     const onClickHandler = (e: React.MouseEvent<HTMLInputElement>) => {
         if (inputRef.current?.selectionStart === 0) {
             setSelect(0)
-        }else{
+        } else {
             setSelect(null)
         }
     }
@@ -35,25 +35,35 @@ export const NumericInput = ({callback, currentNums}: NumericInputProps) => {
         if (e.key === "Enter") {
             if (firstValue.length === 1 && firstValue === '0') {
                 callback([value, ...currentNums]);
+            } else if (firstValue.length === 0) {
+                callback([`0${value}`, ...currentNums]);
             } else {
+                console.log(value)
                 let newValue = value.replace(/^0+/, "");
                 callback([newValue, ...currentNums]);
             }
         }
-        if(e.key === 'ArrowLeft'){
-           if(inputRef.current?.selectionStart === 1 || inputRef.current?.selectionStart === 0){
-               setSelect(0)
-           } else(
-               setSelect(null)
-           )
+        if (e.key === 'ArrowLeft') {
+            if (inputRef.current?.selectionStart === 1 || inputRef.current?.selectionStart === 0) {
+                setSelect(0)
+            } else (
+                setSelect(null)
+            )
         }
-        if(e.key === 'ArrowRight'){
+        if (e.key === 'ArrowRight') {
             setSelect(null)
         }
-        if (e.key === 'Backspace' && select === 0) {
-            inputRef.current?.setSelectionRange(select,0)
+        if (e.key === 'Backspace') {
+            if(inputRef.current?.selectionStart === 1 || inputRef.current?.selectionStart === 0){
+                setSelect(0)
+            }
+            if(select === 0){
+                inputRef.current?.setSelectionRange(select, 0)
+            }
         }
-
+        if (select === 0 && e.key !== 'Backspace'){
+            setSelect(null)
+        }
     }
 
     return (
